@@ -29,8 +29,12 @@ def count_values(a, k):
     >>> count_values([2,2,1,0,1,0,1,3], 3)
     [2, 3, 2, 1]
     """
-    ###TODO
-    pass
+    counts = [0] * (k + 1)
+    
+    for num in a:
+        counts[num] += 1
+    
+    return counts
 
 def test_count_values():
     assert count_values([2,2,1,0,1,0,1,3], 3) == [2, 3, 2, 1]
@@ -46,8 +50,8 @@ def get_positions(counts):
     >>> get_positions([2, 3, 2, 1])
     [0, 2, 5, 7]    
     """
-    ###TODO
-    pass
+    positions, useless_part = scan(plus, 0, counts)
+    return positions
     
 def test_get_positions():
     assert get_positions([2, 3, 2, 1]) == [0, 2, 5, 7]
@@ -66,12 +70,20 @@ def construct_output(a, positions):
     >>> construct_output([2,2,1,0,1,0,1,3], [0, 2, 5, 7])
     [0,0,1,1,1,2,2,3]    
     """
-    ###TODO
-    pass
+    output = [0] * len(a)
+
+    for i, val in enumerate(positions):
+        # Ensure we don't go out of bounds on the last element
+        if i < len(positions) - 1:
+            output[positions[i]:positions[i + 1]] = [i] * (positions[i + 1] - positions[i])
+        else:
+            output[positions[i]:] = [i] * (len(a) - positions[i])
+    
+    return output
 
 def test_construct_output():
     assert construct_output([2,2,1,0,1,0,1,3], [0, 2, 5, 7]) == [0,0,1,1,1,2,2,3]
-    
+
 def count_values_mr(a, k):
     """
     Use map-reduce to implement count_values.
@@ -85,13 +97,11 @@ def test_count_values_mr():
     assert count_values_mr([2,2,1,0,1,0,1,3], 3) == [2, 3, 2, 1]
 
 def count_map(value):
-    ###TODO
-    pass
+    return [(value, 1)]
 
 def count_reduce(group):
-    ###TODO
-    pass
-
+    key, values = group
+    return (key, sum(values))
 
 # the below functions are provided for use above.
 
@@ -112,13 +122,13 @@ def plus(x,y):
     # done. 
     return x + y
 
-
 def scan(f, id_, a):
-    # done. 
-    return (
-            [reduce(f, id_, a[:i+1]) for i in range(len(a))],
-             reduce(f, id_, a)
-           )
+    # done.
+    scanned_list = [id_]
+    for i in range(len(a)):
+        scanned_list.append(f(scanned_list[i], a[i]))
+
+    return scanned_list[:-1], reduce(f, id_, a)
 
 def reduce(f, id_, a):
     # done. do not change me.

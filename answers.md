@@ -45,9 +45,7 @@ We can use `scan` to create the needed list. You may need to adjust slightly the
 
 > **put in answers.md**
 
-.  
-.  
-. 
+get_positions calls scan once and then returns part of its output, so its work and span will be those of scan itself. The efficient version of scan we learned in class had both work and span of O(n), so get_positions will also have both work and span of O(n).
 
 
 4. Finally, we'll use this positions array to construct the final output. First, we'll create the output list ($n$ elements). Then, we will loop through the original input array once again. For each value, we'll look up in the `positions` array where the value should go. E.g., for the first value 2, we look up `positions[2]`, which tells us the 2 should go in index 5 in the output. To update `counts` for future iterations, we will then increment `counts` by one for the value we just read. E.g., `positions[2]` will increment from 5 to 6; the next 2 we read will be placed in index 6.
@@ -63,18 +61,23 @@ Implement `construct_output` with a simple for loop and test with `test_construc
 
 > **put in answers.md**
 
-.  
-.  
-. 
+construct_output relies on a few constant time operations, and a for loop that loops over the input once. Thus, it is not parallelizable and the work and span will be the same. Since there are no nested for loops, and the expressions contained in the for loop are all constant time, the work and span of construct_output are O(n).
 
 
 6. What is the work and span of `supersort`?
 
 > **put in answers.md**
 
-.  
-.  
-. 
+supersort is a composition of count_values, get_positions, and construct_output. Thus, its work and span will be the sum of the work and span of these three operations, which we have already been provided above or have otherwise calculated:
+
+count_values: linear work and span (from question 1)
+get_positions: linear work and span (from question 3)
+construct_output: linear work and span (from question 5)
+
+Thus:
+
+W_supersort = O(n) + O(n) + O(n) : O(n) work
+S_supersort = O(n) + O(n) + O(n) : O(n) span
 
 
 7. Our implementation of `count_values` has poor span. Let's instead implement it using map-reduce. Complete `count_map`, `count_reduce`, which are used by `count_values_mr` to construct the `counts` variable using map-reduce. Test with `test_count_values_mr`.
